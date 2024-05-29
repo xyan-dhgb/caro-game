@@ -4,7 +4,7 @@
 Caro, also known as Gomoku or Five in a Row, is a traditional board game that is widely popular in many cultures. The game is simple yet challenging, requiring strategic thinking and planning. The objective is to align five of your pieces in a row, either horizontally, vertically, or diagonally, before your opponent does.
 
 ## Game Rules
-1. **Players**: The game is played by two players.
+1. **Players**: The game is played by two players. Each player has 10 seconds to play.
 2. **Board**: The game is played on a grid. Typically, a 15x20 board is used.
 3. **Pieces**: Each player has a set of pieces. One player uses X pieces, and the other uses O pieces.
 4. **Objective**: The goal is to be the first player to get an unbroken row of five pieces horizontally, vertically, or diagonally.
@@ -15,7 +15,7 @@ Caro, also known as Gomoku or Five in a Row, is a traditional board game that is
 
 ## Features
 - **Multiplayer Mode**: Play against another player on the same device or over a network.
-- **Fantastic Menu**: Give you multiple choice to make your game become more and more creative.
+- **Fantastic Menu**: Give you multiple choices to make your game more and more creative.
 - **Undo Move**: Allows players to undo their last move.
 - **User-Friendly Interface**: Clean and intuitive interface for an enjoyable playing experience.
 
