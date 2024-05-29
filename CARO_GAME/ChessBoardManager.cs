@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -61,6 +61,33 @@ namespace CARO_GAME
             get => matrix;
             set => matrix = value;
         }
+
+        // Tạo event đánh dấu lượt khi nhấn một button theo lượt của người chơi với thời gian đã được định sẵn
+        private event EventHandler playerMarked;
+        public event EventHandler PlayerMarked
+        {
+            add // Khi người chơi bắt đầu
+            {
+                playerMarked += value;
+            }
+            remove // Khi người chơi kết thúc
+            {
+                playerMarked -= value;
+            }
+        }
+
+        private event EventHandler gameIsEnd;
+        public event EventHandler GameIsEnd
+        {
+            add // Khi người chơi bắt đầu
+            {
+                gameIsEnd += value;
+            }
+            remove // Khi người chơi kết thúc
+            {
+                gameIsEnd -= value;
+            }
+        }
         #endregion
 
         #region Initialize
@@ -85,6 +112,8 @@ namespace CARO_GAME
 
         public void DrawChessBoard()
         {
+            ChessBoard.Enabled = true;
+            
             // Khởi tạo thắng thua vì sẽ có trường hợp New game
             Matrix = new List<List<Button>>();
 
@@ -129,15 +158,25 @@ namespace CARO_GAME
 
             changePlayer();
 
+            if (playerMarked != null)
+            {
+                playerMarked(this, new EventArgs());
+            }
+
             if (isEndGame(btn))
             {
                 EndGame();
             }
+
         }
 
-        private void EndGame()
+        public void EndGame()
         {
-            MessageBox.Show("Your game is over!!!", "Look at me", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+            if (gameIsEnd != null)
+            {
+                gameIsEnd(this, new EventArgs());
+            }
+            // MessageBox.Show("Your game is over!!!", "Look at me", MessageBoxButtons.OK, MessageBoxIcon.Hand);
         }
 
         private bool isEndGame(Button btn)
@@ -325,18 +364,6 @@ namespace CARO_GAME
 
             PlayerMark.Image = Player[currentPlayer].Mark;
         }
-
-
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
         #endregion
     }
 }
