@@ -16,7 +16,8 @@ Caro, also known as Gomoku or Five in a Row, is a traditional board game that is
 ## Features
 - **Multiplayer Mode**: Play against another player on the same device or over a network.
 - **Fantastic Menu**: Give you multiple choices to make your game more and more creative.
-- **Undo Move**: Allows players to undo their last move.
+- **Music**: Allows players to unmute or mute music when they are playing.
+- **Change UI Mode**: An excellent feature to change UI mode (light and dark mode).
 - **User-Friendly Interface**: Clean and intuitive interface for an enjoyable playing experience.
 
 ## Installation
