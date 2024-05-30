@@ -105,7 +105,7 @@ namespace CARO_GAME
 
         void QuitGame()
         {
-            Application.Exit();
+            this.Close() ;
         }
         private void newGameToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -129,6 +129,7 @@ namespace CARO_GAME
             {
                 e.Cancel = true;
             }
+            soundPlayer.Stop();
         }
 
         private void clickhereLabel_Click(object sender, EventArgs e)
