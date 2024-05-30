@@ -98,12 +98,9 @@ namespace CARO_GAME
             this.PlayerMark = mark;
             this.Player = new List<Player>()
             {
-                new Player("YOU", Image.FromFile(Application.StartupPath + "\\Resources\\tick.jpg")),
-                new Player("AI", Image.FromFile(Application.StartupPath + "\\Resources\\circle.jpg"))
+                new Player("PLAYER1", Image.FromFile(Application.StartupPath + "\\Resources\\tick.jpg")),
+                new Player("PLAYER2", Image.FromFile(Application.StartupPath + "\\Resources\\circle.jpg"))
             };
-
-            currentPlayer = 0;
-            changePlayer();
         }
 
         #endregion
@@ -113,7 +110,11 @@ namespace CARO_GAME
         public void DrawChessBoard()
         {
             ChessBoard.Enabled = true;
-            
+            ChessBoard.Controls.Clear(); // Khi người chơi nhấn "New game" trong menu
+
+            currentPlayer = 0;
+            changePlayer();
+
             // Khởi tạo thắng thua vì sẽ có trường hợp New game
             Matrix = new List<List<Button>>();
 
