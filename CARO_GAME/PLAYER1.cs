@@ -5,20 +5,26 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Configuration;
 using System.Media;
-
+using System.Net;
+using System.Net.Sockets;
+using System.Net.NetworkInformation;
+using System.Runtime.InteropServices;
 
 namespace CARO_GAME
 {
     public partial class player1Form : Form
     {
+        #region Properties
         ChessBoardManager ChessBoard;
         private int totalTime = 15; // Tổng thời gian đếm (15 giây)
         private SoundPlayer soundPlayer;
-
+        SocketManager socket;
+        #endregion
 
         public player1Form()
         {
@@ -45,6 +51,8 @@ namespace CARO_GAME
 
             // Đặt thời gian mặc định cho labelTime
             timeLabel.Text = TimeSpan.FromSeconds(0).ToString(@"mm\:ss");
+
+            socket = new SocketManager();
         }
 
 
@@ -100,21 +108,16 @@ namespace CARO_GAME
 
             // Vẽ bàn cờ 
             ChessBoard.DrawChessBoard();
-            
+
         }
 
         void QuitGame()
         {
-            this.Close() ;
+            this.Close();
         }
         private void newGameToolStripMenuItem_Click(object sender, EventArgs e)
         {
             NewGame();
-        }
-
-        private void changeUIModeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void quitGameToolStripMenuItem_Click(object sender, EventArgs e)
@@ -129,7 +132,11 @@ namespace CARO_GAME
             {
                 e.Cancel = true;
             }
-            soundPlayer.Stop();
+
+            if (soundPlayer != null)
+            {
+                soundPlayer.Stop();
+            }
         }
 
         private void clickhereLabel_Click(object sender, EventArgs e)
@@ -147,6 +154,74 @@ namespace CARO_GAME
         private void mute_Click(object sender, EventArgs e)
         {
             soundPlayer.Stop();
+        }
+
+        private void lightToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void menuToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            menuToolStrip.Font = new Font(FontFamily.GenericSansSerif, 12.0F, FontStyle.Bold);
+        }
+
+        private void connectButton_Click(object sender, EventArgs e)
+        {
+            socket.IP = IPTextBox.Text;
+
+            if (!socket.ConnectServer())
+            {
+                socket.CreateServer();
+
+                Thread listenThread = new Thread(() =>
+                {
+                    while (true)
+                    {
+                        Thread.Sleep(500);
+                        try
+                        {
+                            Listen();
+                            break;
+                        }
+                        catch
+                        {
+
+                        }
+                    }
+                });
+                listenThread.IsBackground = true;
+                listenThread.Start();
+            }
+            else
+            {
+                Thread listenThread = new Thread(() =>
+                {
+                    Listen();
+                });
+                listenThread.IsBackground = true;
+                listenThread.Start();
+
+                socket.Send("Thông tin từ Client");
+            }
+
+        }
+
+        private void player1Form_Shown(object sender, EventArgs e)
+        {
+            // Kết nối thông qua Wifi
+            IPTextBox.Text = socket.GetLocalIPv4(NetworkInterfaceType.Wireless80211);
+
+            if (string.IsNullOrEmpty(IPTextBox.Text))
+            {
+                IPTextBox.Text = socket.GetLocalIPv4(NetworkInterfaceType.Ethernet);
+            }
+        }
+
+        void Listen()
+        {
+            string data = (string)socket.Receive();
+            MessageBox.Show(data);
         }
     }
 }
