@@ -15,3 +15,5 @@
   2. If the Server accepts => Connect
 
 ==> Client and Server have successfully connected.
+
+==> Go to [network_flow_chart](https://github.com/andreafletcherdinh/CARO/blob/main/network_Diagram.drawio.png) for more details
