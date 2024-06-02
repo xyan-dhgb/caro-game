@@ -63,8 +63,8 @@ namespace CARO_GAME
         }
 
         // Tạo event đánh dấu lượt khi nhấn một button theo lượt của người chơi với thời gian đã được định sẵn
-        private event EventHandler playerMarked;
-        public event EventHandler PlayerMarked
+        private event EventHandler <ButtonClickEvent> playerMarked;
+        public event EventHandler <ButtonClickEvent> PlayerMarked
         {
             add // Khi người chơi bắt đầu
             {
@@ -96,6 +96,7 @@ namespace CARO_GAME
             this.ChessBoard = chessBoard;
             this.PlayerName = playerName;
             this.PlayerMark = mark;
+
             this.Player = new List<Player>()
             {
                 new Player("PLAYER1", Image.FromFile(Application.StartupPath + "\\Resources\\tick.jpg")),
@@ -157,11 +158,13 @@ namespace CARO_GAME
 
             Mark(btn);
 
+            CurrentPlayer = CurrentPlayer == 1 ? 0 : 1;
+
             changePlayer();
 
             if (playerMarked != null)
             {
-                playerMarked(this, new EventArgs());
+                playerMarked(this, new ButtonClickEvent(getChessPoint(btn)));
             }
 
             if (isEndGame(btn))
@@ -169,6 +172,27 @@ namespace CARO_GAME
                 EndGame();
             }
 
+        }
+
+        public void OtherPlayerMarked (Point point)
+        {
+            Button btn = Matrix[point.Y][point.X];
+
+            if (btn.BackgroundImage != null)
+            {
+                return;
+            }
+
+            Mark(btn);
+
+            CurrentPlayer = CurrentPlayer == 1 ? 0 : 1;
+
+            changePlayer();
+
+            if (isEndGame(btn))
+            {
+                EndGame();
+            }
         }
 
         public void EndGame()
@@ -355,8 +379,6 @@ namespace CARO_GAME
         private void Mark(Button btn)
         {
             btn.BackgroundImage = Player[currentPlayer].Mark;
-
-            currentPlayer = currentPlayer == 1 ? 0 : 1;
         }
 
         private void changePlayer ()
@@ -366,5 +388,21 @@ namespace CARO_GAME
             PlayerMark.Image = Player[currentPlayer].Mark;
         }
         #endregion
+    }
+    public class ButtonClickEvent : EventArgs
+    {
+        private Point clickedPoint;
+
+        public Point ClickedPoint
+        {
+            get => clickedPoint;
+            set => clickedPoint = value;
+        }
+
+        public ButtonClickEvent (Point point)
+        {
+            this.ClickedPoint = point;
+
+        }
     }
 }
