@@ -30,6 +30,8 @@ namespace CARO_GAME
         {
             InitializeComponent();
 
+            Control.CheckForIllegalCrossThreadCalls = false;
+
             ChessBoard = new ChessBoardManager(chessBoardPanel, nameTextBox, player1Image);
 
             // Gọi event khi kết thúc lượt của người chơi
@@ -46,16 +48,16 @@ namespace CARO_GAME
             timerCountDown.Interval = Constant.COUNT_DOWN_INTERVAL;
 
 
+            socket = new SocketManager();
+
             // Mỗi khi bắt đầu trò chơi mới thì luôn tạo lại bàn cờ
             NewGame();
 
             // Đặt thời gian mặc định cho labelTime
             timeLabel.Text = TimeSpan.FromSeconds(0).ToString(@"mm\:ss");
-
-            socket = new SocketManager();
         }
 
-
+        #region Method
         void EndGameAnnouncement()
         {
             timerCountDown.Stop();
@@ -63,10 +65,15 @@ namespace CARO_GAME
             MessageBox.Show("Your game is end!!!", "Announcement", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void ChessBoard_PlayerMarked(object sender, EventArgs e)
+        private void ChessBoard_PlayerMarked(object sender, ButtonClickEvent e)
         {
             timerCountDown.Start();
+            chessBoardPanel.Enabled = false;
             processBar.Value = 0; // Reset thời gian
+
+            socket.Send(new SocketData((int)SocketCommand.SEND_POINT, "" , e.ClickedPoint));
+
+            Listen();
         }
 
         private void ChessBoard_GameIsEnd(object sender, EventArgs e)
@@ -172,37 +179,15 @@ namespace CARO_GAME
 
             if (!socket.ConnectServer())
             {
+                socket.isServer = true;
+                chessBoardPanel.Enabled = true;
                 socket.CreateServer();
-
-                Thread listenThread = new Thread(() =>
-                {
-                    while (true)
-                    {
-                        Thread.Sleep(500);
-                        try
-                        {
-                            Listen();
-                            break;
-                        }
-                        catch
-                        {
-
-                        }
-                    }
-                });
-                listenThread.IsBackground = true;
-                listenThread.Start();
             }
             else
             {
-                Thread listenThread = new Thread(() =>
-                {
-                    Listen();
-                });
-                listenThread.IsBackground = true;
-                listenThread.Start();
-
-                socket.Send("Thông tin từ Client");
+                socket.isServer = false;
+                chessBoardPanel.Enabled = false;
+                Listen();
             }
 
         }
@@ -220,8 +205,50 @@ namespace CARO_GAME
 
         void Listen()
         {
-            string data = (string)socket.Receive();
-            MessageBox.Show(data);
+            Thread listenThread = new Thread(() =>
+               {
+                   try
+                   {
+                       SocketData data = (SocketData)socket.Receive();
+
+                       ProcessData(data);
+                   }
+                   catch (Exception ex) 
+                   {
+                   }
+               });
+            listenThread.IsBackground = true;
+            listenThread.Start();
+        }
+
+        private void ProcessData(SocketData data)
+        {
+            switch (data.Command)
+            {
+                case (int)SocketCommand.NOTIFICATION:
+                    MessageBox.Show(data.Message);
+                    break;
+                case (int)SocketCommand.NEW_GAME:
+                    break;
+                case (int)SocketCommand.SEND_POINT:
+                        this.Invoke((MethodInvoker)(() =>
+                        {
+                            processBar.Value = 0;
+                            chessBoardPanel.Enabled = true;
+                            timerCountDown.Start();
+                            ChessBoard.OtherPlayerMarked(data.Point);
+                        }));
+                    break;
+                case (int)SocketCommand.END_GAME:
+                    break;
+                case (int)SocketCommand.QUIT:
+                    break;
+                default:
+                    break;
+            }
+
+            Listen();
+            #endregion
         }
     }
 }
