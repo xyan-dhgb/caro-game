@@ -1,4 +1,4 @@
-# NOTE ABOUT THE NETWORK PART OF CARO GAME (TCP connection)
+# THE NETWORK PART OF CARO GAME (TCP connection)
 
 1 form is both a client and a server (client joins the room and the server creates the room)
 
