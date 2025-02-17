@@ -17,7 +17,7 @@ Caro, also known as Gomoku or Five in a Row, is a traditional board game that is
 - **Multiplayer Mode**: Play against another player on the same device or over a network.
 - **Fantastic Menu**: Give you multiple choices to make your game more and more creative.
 - **Music**: Allows players to unmute or mute music when they are playing.
-- **Change UI Mode**: An excellent feature to change UI mode (light and dark mode).
+- **Change UI Mode**: An excellent feature for changing UI mode (light and dark mode).
 - **User-Friendly Interface**: Clean and intuitive interface for an enjoyable playing experience.
 
 ## Installation
@@ -29,7 +29,7 @@ To install and run the game, follow these steps:
     ```
 2. Navigate to the project directory:
     ```sh
-    cd CARO_GAME
+    cd caro-game
     ```
 3. Open the solution file in Visual Studio:
     ```sh
